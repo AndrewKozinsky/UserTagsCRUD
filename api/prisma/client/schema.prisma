@@ -1,0 +1,36 @@
+generator client {
+  provider      = "prisma-client-js"
+  output   = "./client"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:kxPQgs_35Qq@db:5432/crud?schema=public"
+}
+
+model User {
+  uid      String    @id() @db.Uuid @unique() @default(uuid())
+  email    String    @unique() @db.VarChar(100)
+  password String    @db.VarChar(100)
+  nickname String    @unique() @db.VarChar(30)
+
+  @@map("user")
+}
+
+model Tag {
+  id        Int       @db.SmallInt @id() @default(autoincrement())
+  userId    String    @db.Uuid
+  name      String    @db.VarChar(40) @unique()
+  sortOrder Int       @db.SmallInt @default(0)
+
+  @@map("tag")
+}
+
+model UserTag {
+  id     Int    @id() @unique() @default(autoincrement()) @db.SmallInt
+  userId String @db.Uuid
+  tagId  Int    @db.SmallInt
+
+  @@map("user_tag")
+}

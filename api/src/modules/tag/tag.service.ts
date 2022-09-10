@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaClient, Tag } from '@prisma/client'
 import { HelperService } from '../helper/helper.service'
 import CreateTagDto from './dto/createTag.dto'
+import { AppRequest } from '../../types/miscTypes'
+import { PrismaClient, Tag } from 'prisma/client'
 
 @Injectable()
 export class TagService {
@@ -10,10 +11,12 @@ export class TagService {
 		private readonly helperService: HelperService
 	) {}
 
-	async createTag(createTagDto: CreateTagDto) {
+	async createTag(request: AppRequest, createTagDto: CreateTagDto) {
+		const newTagData = await this.createTagDataFromCreateTagDto(request, createTagDto)
+
 		const createdTag = await this.helperService.runQuery<Tag>(() => {
 			return this.prismaClient.tag.create({
-				data: createTagDto
+				data: newTagData
 			})
 		})
 
@@ -26,5 +29,8 @@ export class TagService {
 
 	// ======== Вспомогательные методы ========
 
-
+	createTagDataFromCreateTagDto(request: AppRequest, createTagDto: CreateTagDto) {
+		const userId = request.user?.uid as string
+		return Object.assign(createTagDto, { userId } )
+	}
 }

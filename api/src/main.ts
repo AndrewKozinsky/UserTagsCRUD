@@ -10,11 +10,11 @@ async function bootstrap() {
 
 	app.use(cookieParser())
 
-	// Удаление свойств отсутствующих в DTO передаваемых в теле объекта
-	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
-
 	// Проверка соответствие тела запроса DTO
 	app.useGlobalPipes(new ReqBodyPipe())
+
+	// Удаление свойств отсутствующих в DTO передаваемых в теле объекта (важен порядок трубок!)
+	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
 
 	// Обработчик всех исключений
 	app.useGlobalFilters(new HttpExceptionFilter())

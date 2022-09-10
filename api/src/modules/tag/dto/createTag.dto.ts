@@ -1,10 +1,12 @@
-import { IsEmail, Matches, MaxLength, MinLength } from 'class-validator'
+import { IsNumber, IsOptional, IsString, MaxLength } from 'class-validator'
 
 export default class CreateTagDto {
-	// @MaxLength(100, { message: 'Значение должно быть короче или равно 100 символам' })
+	@IsString({ message: 'Должно быть строковое значение' })
+	@MaxLength(40, { message: 'Значение должно быть короче или равно 40 символам' })
 	name: string
 
-	// @MinLength(8, { message: 'Значение должно быть длиннее или равно 8 символам' })
-	// @MaxLength(100, { message: 'Значение должно быть короче или равно 100 символам' })
-	sortOrder: string
+	@IsNumber({}, { message: 'Должно быть числовое значение' })
+	@IsOptional()
+	sortOrder: number
 }
+	

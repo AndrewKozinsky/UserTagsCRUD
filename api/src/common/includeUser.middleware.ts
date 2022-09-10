@@ -7,16 +7,19 @@ export class IncludeUserMiddleware implements NestMiddleware {
 
 	async use(req: any, res: any, next: () => void) {
 		const token = this.userService.getTokenFromRequest(req)
-		if (!token) next()
+		if (!token || token == '') {
+			next()
+			return
+		}
 
 		const userUid = await this.userService.extractUserUidFromToken(token)
-		if (!userUid) next()
+		if (!userUid) {
+			next()
+			return
+		}
 
 		const user = await this.userService.getUserByCredentials({ uid: userUid })
-
-		if (user) {
-			req.user = user
-		}
+		if (user) req.user = user
 
 		next()
 	}

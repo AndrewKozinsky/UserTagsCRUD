@@ -16,10 +16,10 @@ import { ResponseObjType } from '../types/responseTypes'
 @Injectable()
 export class ReqBodyPipe implements PipeTransform {
 	async transform(value: unknown, { metatype }: ArgumentMetadata) {
-
 		if (!metatype || !this.toValidate(metatype)) return value
 
 		const object = plainToInstance(metatype, value)
+
 		const errors = await validate(object)
 
 		if (errors.length > 0) {

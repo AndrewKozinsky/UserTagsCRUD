@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
+import { PrismaClientKnownRequestError } from 'prisma/client/runtime'
 
 /**
  * Класс с различными методами используемые на всём приложении
@@ -17,9 +17,9 @@ export class HelperService {
 			return await queryFn()
 		}
 		catch(err) {
+
 			// Типы ошибок Призмы описаны в prisma.io/docs/reference/api-reference/error-reference
 			if (err instanceof PrismaClientKnownRequestError) {
-
 				if (err.code === 'P2002' && err.meta) {
 					throw new HttpException({
 						message: 'Поля тела запроса содержат ошибки',
@@ -40,6 +40,8 @@ export class HelperService {
 					}, HttpStatus.BAD_REQUEST)
 				}
 			}
+
+			console.log(err)
 
 			throw new Error('Неизвестная ошибка сервера.')
 		}

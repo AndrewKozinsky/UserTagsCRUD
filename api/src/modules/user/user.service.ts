@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient, User } from 'prisma/client'
 import { v4 as uuid } from 'uuid'
 import { Response } from 'express'
 import { HelperService } from '../helper/helper.service'

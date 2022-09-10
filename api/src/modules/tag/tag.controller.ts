@@ -1,16 +1,20 @@
-import { Body, Controller, Post, Get, Put } from '@nestjs/common'
+import { Body, Controller, Post, Get, Put, UseGuards, Req } from '@nestjs/common'
 import { TagService } from './tag.service'
 import CreateTagDto from './dto/createTag.dto'
+import { AuthGuard } from '../../common/auth.guard'
+import { AppRequest } from '../../types/miscTypes'
 
 @Controller('tag')
 export class TagController {
 	constructor(private readonly tagService: TagService) {}
 
+	@UseGuards(AuthGuard)
 	@Post('')
-	createTag(@Body() body: CreateTagDto) {
-		return this.tagService.createTag(body)
+	createTag(@Req() request: AppRequest, @Body() body: CreateTagDto) {
+		return this.tagService.createTag(request, body)
 	}
 
+	/*@UseGuards(AuthGuard)
 	@Get(':id')
 	getTag() {
 		return {
@@ -21,8 +25,9 @@ export class TagController {
 			'name': 'example',
 			'sortOrder': '0'
 		}
-	}
+	}*/
 
+	/*@UseGuards(AuthGuard)
 	@Get('')
 	getTags() {
 		return {
@@ -50,8 +55,9 @@ export class TagController {
 				'quantity': 100
 			}
 		}
-	}
+	}*/
 
+	/*@UseGuards(AuthGuard)
 	@Put(':id')
 	updateTag() {
 		return {
@@ -62,10 +68,11 @@ export class TagController {
 			'name': 'example',
 			'sortOrder': '0'
 		}
-	}
+	}*/
 
+	/*@UseGuards(AuthGuard)
 	@Put(':id')
 	deleteTag() {
 
-	}
+	}*/
 }
