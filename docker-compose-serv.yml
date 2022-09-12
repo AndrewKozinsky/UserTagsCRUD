@@ -4,6 +4,9 @@ services:
   nginx:
     image: nginx:1.19.7-alpine
     container_name: crud-nginx
+    environment:
+        - VIRTUAL_HOST=crud.andrewkozinsky.ru
+        - LETSENCRYPT_HOST=crud.andrewkozinsky.ru
     depends_on:
       - api
       - db
@@ -15,20 +18,17 @@ services:
   api:
     build:
       context: api
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     container_name: crud-api
     restart: unless-stopped
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 3000
       JWT_SECRET: bxspozdFS46
       JWT_EXPIRES: 1800000
     depends_on:
       - db
-    volumes:
-      - ./api/src:/app/src
-      - ./api/prisma:/app/prisma
-    command: npm run start:dev
+    command: npm run start:prod
 
   db:
     image: postgres:13-alpine
