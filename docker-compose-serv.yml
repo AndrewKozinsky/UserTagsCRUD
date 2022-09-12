@@ -1,0 +1,47 @@
+version: '3.3'
+
+services:
+  nginx:
+    image: nginx:1.19.7-alpine
+    container_name: crud-nginx
+    depends_on:
+      - api
+      - db
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf.dev:/etc/nginx/nginx.conf
+
+  api:
+    build:
+      context: api
+      dockerfile: Dockerfile.dev
+    container_name: crud-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      JWT_SECRET: bxspozdFS46
+      JWT_EXPIRES: 1800000
+    depends_on:
+      - db
+    volumes:
+      - ./api/src:/app/src
+      - ./api/prisma:/app/prisma
+    command: npm run start:dev
+
+  db:
+    image: postgres:13-alpine
+    container_name: crud-db
+    restart: unless-stopped
+    ports:
+      - "4000:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kxPQgs_35Qq
+      POSTGRES_DB: crud
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:
