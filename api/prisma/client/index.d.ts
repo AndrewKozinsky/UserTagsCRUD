@@ -29,9 +29,9 @@ export type User = {
  */
 export type Tag = {
   id: number
-  userId: string
   name: string
   sortOrder: number
+  userId: string
 }
 
 /**
@@ -41,7 +41,7 @@ export type Tag = {
 export type UserTag = {
   id: number
   userId: string
-  tagId: number
+  tagIds: number[]
 }
 
 
@@ -848,6 +848,54 @@ export namespace Prisma {
    */
 
 
+  /**
+   * Count Type UserCountOutputType
+   */
+
+
+  export type UserCountOutputType = {
+    Tags: number
+  }
+
+  export type UserCountOutputTypeSelect = {
+    Tags?: boolean
+  }
+
+  export type UserCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | UserCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? UserCountOutputType
+    : S extends undefined
+    ? never
+    : S extends UserCountOutputTypeArgs
+    ?'include' extends U
+    ? UserCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof UserCountOutputType ? UserCountOutputType[P] : never
+  } 
+    : UserCountOutputType
+  : UserCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     * 
+    **/
+    select?: UserCountOutputTypeSelect | null
+  }
+
+
 
   /**
    * Models
@@ -921,7 +969,7 @@ export namespace Prisma {
      * Determine the order of Users to fetch.
      * 
     **/
-    orderBy?: Enumerable<UserOrderByWithRelationInput>
+    orderBy?: Enumerable<UserOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -1016,6 +1064,13 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     nickname?: boolean
+    Tags?: boolean | TagFindManyArgs
+    _count?: boolean | UserCountOutputTypeArgs
+  }
+
+  export type UserInclude = {
+    Tags?: boolean | TagFindManyArgs
+    _count?: boolean | UserCountOutputTypeArgs
   }
 
   export type UserGetPayload<
@@ -1027,11 +1082,16 @@ export namespace Prisma {
     ? never
     : S extends UserArgs | UserFindManyArgs
     ?'include' extends U
-    ? User 
+    ? User  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'Tags' ? Array < TagGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+  } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-    P extends keyof User ? User[P] : never
+        P extends 'Tags' ? Array < TagGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof User ? User[P] : never
   } 
     : User
   : User
@@ -1406,6 +1466,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
+    Tags<T extends TagFindManyArgs = {}>(args?: Subset<T, TagFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Tag>>, PrismaPromise<Array<TagGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -1444,6 +1505,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * Filter, which User to fetch.
      * 
     **/
@@ -1472,6 +1538,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * Filter, which User to fetch.
      * 
     **/
@@ -1482,7 +1553,7 @@ export namespace Prisma {
      * Determine the order of Users to fetch.
      * 
     **/
-    orderBy?: Enumerable<UserOrderByWithRelationInput>
+    orderBy?: Enumerable<UserOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -1535,6 +1606,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * Filter, which Users to fetch.
      * 
     **/
@@ -1545,7 +1621,7 @@ export namespace Prisma {
      * Determine the order of Users to fetch.
      * 
     **/
-    orderBy?: Enumerable<UserOrderByWithRelationInput>
+    orderBy?: Enumerable<UserOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -1581,6 +1657,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * The data needed to create a User.
      * 
     **/
@@ -1610,6 +1691,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
     /**
      * The data needed to update a User.
      * 
@@ -1650,6 +1736,11 @@ export namespace Prisma {
     **/
     select?: UserSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
      * The filter to search for the User to update in case it exists.
      * 
     **/
@@ -1676,6 +1767,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
     /**
      * Filter which User to delete.
      * 
@@ -1717,6 +1813,11 @@ export namespace Prisma {
      * 
     **/
     select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
   }
 
 
@@ -1746,23 +1847,23 @@ export namespace Prisma {
 
   export type TagMinAggregateOutputType = {
     id: number | null
-    userId: string | null
     name: string | null
     sortOrder: number | null
+    userId: string | null
   }
 
   export type TagMaxAggregateOutputType = {
     id: number | null
-    userId: string | null
     name: string | null
     sortOrder: number | null
+    userId: string | null
   }
 
   export type TagCountAggregateOutputType = {
     id: number
-    userId: number
     name: number
     sortOrder: number
+    userId: number
     _all: number
   }
 
@@ -1779,23 +1880,23 @@ export namespace Prisma {
 
   export type TagMinAggregateInputType = {
     id?: true
-    userId?: true
     name?: true
     sortOrder?: true
+    userId?: true
   }
 
   export type TagMaxAggregateInputType = {
     id?: true
-    userId?: true
     name?: true
     sortOrder?: true
+    userId?: true
   }
 
   export type TagCountAggregateInputType = {
     id?: true
-    userId?: true
     name?: true
     sortOrder?: true
+    userId?: true
     _all?: true
   }
 
@@ -1811,7 +1912,7 @@ export namespace Prisma {
      * Determine the order of Tags to fetch.
      * 
     **/
-    orderBy?: Enumerable<TagOrderByWithRelationInput>
+    orderBy?: Enumerable<TagOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -1893,9 +1994,9 @@ export namespace Prisma {
 
   export type TagGroupByOutputType = {
     id: number
-    userId: string
     name: string
     sortOrder: number
+    userId: string
     _count: TagCountAggregateOutputType | null
     _avg: TagAvgAggregateOutputType | null
     _sum: TagSumAggregateOutputType | null
@@ -1919,9 +2020,14 @@ export namespace Prisma {
 
   export type TagSelect = {
     id?: boolean
-    userId?: boolean
     name?: boolean
     sortOrder?: boolean
+    userId?: boolean
+    User?: boolean | UserArgs
+  }
+
+  export type TagInclude = {
+    User?: boolean | UserArgs
   }
 
   export type TagGetPayload<
@@ -1933,11 +2039,14 @@ export namespace Prisma {
     ? never
     : S extends TagArgs | TagFindManyArgs
     ?'include' extends U
-    ? Tag 
+    ? Tag  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'User' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+  } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-    P extends keyof Tag ? Tag[P] : never
+        P extends 'User' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Tag ? Tag[P] : never
   } 
     : Tag
   : Tag
@@ -2312,6 +2421,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
+    User<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | null >, Prisma__UserClient<UserGetPayload<T> | null >>;
 
     private get _document();
     /**
@@ -2350,6 +2460,11 @@ export namespace Prisma {
     **/
     select?: TagSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
+    /**
      * Filter, which Tag to fetch.
      * 
     **/
@@ -2378,6 +2493,11 @@ export namespace Prisma {
     **/
     select?: TagSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
+    /**
      * Filter, which Tag to fetch.
      * 
     **/
@@ -2388,7 +2508,7 @@ export namespace Prisma {
      * Determine the order of Tags to fetch.
      * 
     **/
-    orderBy?: Enumerable<TagOrderByWithRelationInput>
+    orderBy?: Enumerable<TagOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -2441,6 +2561,11 @@ export namespace Prisma {
     **/
     select?: TagSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
+    /**
      * Filter, which Tags to fetch.
      * 
     **/
@@ -2451,7 +2576,7 @@ export namespace Prisma {
      * Determine the order of Tags to fetch.
      * 
     **/
-    orderBy?: Enumerable<TagOrderByWithRelationInput>
+    orderBy?: Enumerable<TagOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -2487,6 +2612,11 @@ export namespace Prisma {
     **/
     select?: TagSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
+    /**
      * The data needed to create a Tag.
      * 
     **/
@@ -2516,6 +2646,11 @@ export namespace Prisma {
      * 
     **/
     select?: TagSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
     /**
      * The data needed to update a Tag.
      * 
@@ -2556,6 +2691,11 @@ export namespace Prisma {
     **/
     select?: TagSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
+    /**
      * The filter to search for the Tag to update in case it exists.
      * 
     **/
@@ -2582,6 +2722,11 @@ export namespace Prisma {
      * 
     **/
     select?: TagSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
     /**
      * Filter which Tag to delete.
      * 
@@ -2623,6 +2768,11 @@ export namespace Prisma {
      * 
     **/
     select?: TagSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: TagInclude | null
   }
 
 
@@ -2642,60 +2792,56 @@ export namespace Prisma {
 
   export type UserTagAvgAggregateOutputType = {
     id: number | null
-    tagId: number | null
+    tagIds: number | null
   }
 
   export type UserTagSumAggregateOutputType = {
     id: number | null
-    tagId: number | null
+    tagIds: number[] | null
   }
 
   export type UserTagMinAggregateOutputType = {
     id: number | null
     userId: string | null
-    tagId: number | null
   }
 
   export type UserTagMaxAggregateOutputType = {
     id: number | null
     userId: string | null
-    tagId: number | null
   }
 
   export type UserTagCountAggregateOutputType = {
     id: number
     userId: number
-    tagId: number
+    tagIds: number
     _all: number
   }
 
 
   export type UserTagAvgAggregateInputType = {
     id?: true
-    tagId?: true
+    tagIds?: true
   }
 
   export type UserTagSumAggregateInputType = {
     id?: true
-    tagId?: true
+    tagIds?: true
   }
 
   export type UserTagMinAggregateInputType = {
     id?: true
     userId?: true
-    tagId?: true
   }
 
   export type UserTagMaxAggregateInputType = {
     id?: true
     userId?: true
-    tagId?: true
   }
 
   export type UserTagCountAggregateInputType = {
     id?: true
     userId?: true
-    tagId?: true
+    tagIds?: true
     _all?: true
   }
 
@@ -2711,7 +2857,7 @@ export namespace Prisma {
      * Determine the order of UserTags to fetch.
      * 
     **/
-    orderBy?: Enumerable<UserTagOrderByWithRelationInput>
+    orderBy?: Enumerable<UserTagOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -2794,7 +2940,7 @@ export namespace Prisma {
   export type UserTagGroupByOutputType = {
     id: number
     userId: string
-    tagId: number
+    tagIds: number[]
     _count: UserTagCountAggregateOutputType | null
     _avg: UserTagAvgAggregateOutputType | null
     _sum: UserTagSumAggregateOutputType | null
@@ -2819,7 +2965,7 @@ export namespace Prisma {
   export type UserTagSelect = {
     id?: boolean
     userId?: boolean
-    tagId?: boolean
+    tagIds?: boolean
   }
 
   export type UserTagGetPayload<
@@ -3286,7 +3432,7 @@ export namespace Prisma {
      * Determine the order of UserTags to fetch.
      * 
     **/
-    orderBy?: Enumerable<UserTagOrderByWithRelationInput>
+    orderBy?: Enumerable<UserTagOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -3349,7 +3495,7 @@ export namespace Prisma {
      * Determine the order of UserTags to fetch.
      * 
     **/
-    orderBy?: Enumerable<UserTagOrderByWithRelationInput>
+    orderBy?: Enumerable<UserTagOrderByWithRelationAndSearchRelevanceInput>
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
@@ -3548,11 +3694,19 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const TagOrderByRelevanceFieldEnum: {
+    name: 'name',
+    userId: 'userId'
+  };
+
+  export type TagOrderByRelevanceFieldEnum = (typeof TagOrderByRelevanceFieldEnum)[keyof typeof TagOrderByRelevanceFieldEnum]
+
+
   export const TagScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
     name: 'name',
-    sortOrder: 'sortOrder'
+    sortOrder: 'sortOrder',
+    userId: 'userId'
   };
 
   export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
@@ -3568,6 +3722,16 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const UserOrderByRelevanceFieldEnum: {
+    uid: 'uid',
+    email: 'email',
+    password: 'password',
+    nickname: 'nickname'
+  };
+
+  export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     uid: 'uid',
     email: 'email',
@@ -3578,10 +3742,17 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const UserTagOrderByRelevanceFieldEnum: {
+    userId: 'userId'
+  };
+
+  export type UserTagOrderByRelevanceFieldEnum = (typeof UserTagOrderByRelevanceFieldEnum)[keyof typeof UserTagOrderByRelevanceFieldEnum]
+
+
   export const UserTagScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    tagId: 'tagId'
+    tagIds: 'tagIds'
   };
 
   export type UserTagScalarFieldEnum = (typeof UserTagScalarFieldEnum)[keyof typeof UserTagScalarFieldEnum]
@@ -3600,13 +3771,16 @@ export namespace Prisma {
     email?: StringFilter | string
     password?: StringFilter | string
     nickname?: StringFilter | string
+    Tags?: TagListRelationFilter
   }
 
-  export type UserOrderByWithRelationInput = {
+  export type UserOrderByWithRelationAndSearchRelevanceInput = {
     uid?: SortOrder
     email?: SortOrder
     password?: SortOrder
     nickname?: SortOrder
+    Tags?: TagOrderByRelationAggregateInput
+    _relevance?: UserOrderByRelevanceInput
   }
 
   export type UserWhereUniqueInput = {
@@ -3640,16 +3814,19 @@ export namespace Prisma {
     OR?: Enumerable<TagWhereInput>
     NOT?: Enumerable<TagWhereInput>
     id?: IntFilter | number
-    userId?: StringFilter | string
     name?: StringFilter | string
     sortOrder?: IntFilter | number
+    userId?: StringFilter | string
+    User?: XOR<UserRelationFilter, UserWhereInput>
   }
 
-  export type TagOrderByWithRelationInput = {
+  export type TagOrderByWithRelationAndSearchRelevanceInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
     sortOrder?: SortOrder
+    userId?: SortOrder
+    User?: UserOrderByWithRelationAndSearchRelevanceInput
+    _relevance?: TagOrderByRelevanceInput
   }
 
   export type TagWhereUniqueInput = {
@@ -3659,9 +3836,9 @@ export namespace Prisma {
 
   export type TagOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
     sortOrder?: SortOrder
+    userId?: SortOrder
     _count?: TagCountOrderByAggregateInput
     _avg?: TagAvgOrderByAggregateInput
     _max?: TagMaxOrderByAggregateInput
@@ -3674,9 +3851,9 @@ export namespace Prisma {
     OR?: Enumerable<TagScalarWhereWithAggregatesInput>
     NOT?: Enumerable<TagScalarWhereWithAggregatesInput>
     id?: IntWithAggregatesFilter | number
-    userId?: StringWithAggregatesFilter | string
     name?: StringWithAggregatesFilter | string
     sortOrder?: IntWithAggregatesFilter | number
+    userId?: StringWithAggregatesFilter | string
   }
 
   export type UserTagWhereInput = {
@@ -3685,23 +3862,25 @@ export namespace Prisma {
     NOT?: Enumerable<UserTagWhereInput>
     id?: IntFilter | number
     userId?: StringFilter | string
-    tagId?: IntFilter | number
+    tagIds?: IntNullableListFilter
   }
 
-  export type UserTagOrderByWithRelationInput = {
+  export type UserTagOrderByWithRelationAndSearchRelevanceInput = {
     id?: SortOrder
     userId?: SortOrder
-    tagId?: SortOrder
+    tagIds?: SortOrder
+    _relevance?: UserTagOrderByRelevanceInput
   }
 
   export type UserTagWhereUniqueInput = {
     id?: number
+    userId?: string
   }
 
   export type UserTagOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    tagId?: SortOrder
+    tagIds?: SortOrder
     _count?: UserTagCountOrderByAggregateInput
     _avg?: UserTagAvgOrderByAggregateInput
     _max?: UserTagMaxOrderByAggregateInput
@@ -3715,7 +3894,7 @@ export namespace Prisma {
     NOT?: Enumerable<UserTagScalarWhereWithAggregatesInput>
     id?: IntWithAggregatesFilter | number
     userId?: StringWithAggregatesFilter | string
-    tagId?: IntWithAggregatesFilter | number
+    tagIds?: IntNullableListFilter
   }
 
   export type UserCreateInput = {
@@ -3723,6 +3902,7 @@ export namespace Prisma {
     email: string
     password: string
     nickname: string
+    Tags?: TagCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -3730,6 +3910,7 @@ export namespace Prisma {
     email: string
     password: string
     nickname: string
+    Tags?: TagUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -3737,6 +3918,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
+    Tags?: TagUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -3744,6 +3926,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
+    Tags?: TagUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -3768,88 +3951,87 @@ export namespace Prisma {
   }
 
   export type TagCreateInput = {
-    userId: string
     name: string
     sortOrder?: number
+    User: UserCreateNestedOneWithoutTagsInput
   }
 
   export type TagUncheckedCreateInput = {
     id?: number
-    userId: string
     name: string
     sortOrder?: number
+    userId: string
   }
 
   export type TagUpdateInput = {
-    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
+    User?: UserUpdateOneRequiredWithoutTagsNestedInput
   }
 
   export type TagUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type TagCreateManyInput = {
     id?: number
-    userId: string
     name: string
     sortOrder?: number
+    userId: string
   }
 
   export type TagUpdateManyMutationInput = {
-    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
   }
 
   export type TagUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserTagCreateInput = {
     userId: string
-    tagId: number
+    tagIds?: UserTagCreatetagIdsInput | Enumerable<number>
   }
 
   export type UserTagUncheckedCreateInput = {
     id?: number
     userId: string
-    tagId: number
+    tagIds?: UserTagCreatetagIdsInput | Enumerable<number>
   }
 
   export type UserTagUpdateInput = {
     userId?: StringFieldUpdateOperationsInput | string
-    tagId?: IntFieldUpdateOperationsInput | number
+    tagIds?: UserTagUpdatetagIdsInput | Enumerable<number>
   }
 
   export type UserTagUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
-    tagId?: IntFieldUpdateOperationsInput | number
+    tagIds?: UserTagUpdatetagIdsInput | Enumerable<number>
   }
 
   export type UserTagCreateManyInput = {
     id?: number
     userId: string
-    tagId: number
+    tagIds?: UserTagCreatetagIdsInput | Enumerable<number>
   }
 
   export type UserTagUpdateManyMutationInput = {
     userId?: StringFieldUpdateOperationsInput | string
-    tagId?: IntFieldUpdateOperationsInput | number
+    tagIds?: UserTagUpdatetagIdsInput | Enumerable<number>
   }
 
   export type UserTagUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
-    tagId?: IntFieldUpdateOperationsInput | number
+    tagIds?: UserTagUpdatetagIdsInput | Enumerable<number>
   }
 
   export type StringFilter = {
@@ -3863,8 +4045,25 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    search?: string
     mode?: QueryMode
     not?: NestedStringFilter | string
+  }
+
+  export type TagListRelationFilter = {
+    every?: TagWhereInput
+    some?: TagWhereInput
+    none?: TagWhereInput
+  }
+
+  export type TagOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserOrderByRelevanceInput = {
+    fields: Enumerable<UserOrderByRelevanceFieldEnum>
+    sort: SortOrder
+    search: string
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -3899,6 +4098,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    search?: string
     mode?: QueryMode
     not?: NestedStringWithAggregatesFilter | string
     _count?: NestedIntFilter
@@ -3917,11 +4117,22 @@ export namespace Prisma {
     not?: NestedIntFilter | number
   }
 
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type TagOrderByRelevanceInput = {
+    fields: Enumerable<TagOrderByRelevanceFieldEnum>
+    sort: SortOrder
+    search: string
+  }
+
   export type TagCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
     sortOrder?: SortOrder
+    userId?: SortOrder
   }
 
   export type TagAvgOrderByAggregateInput = {
@@ -3931,16 +4142,16 @@ export namespace Prisma {
 
   export type TagMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
     sortOrder?: SortOrder
+    userId?: SortOrder
   }
 
   export type TagMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     name?: SortOrder
     sortOrder?: SortOrder
+    userId?: SortOrder
   }
 
   export type TagSumOrderByAggregateInput = {
@@ -3964,36 +4175,96 @@ export namespace Prisma {
     _max?: NestedIntFilter
   }
 
+  export type IntNullableListFilter = {
+    equals?: Enumerable<number> | null
+    has?: number | null
+    hasEvery?: Enumerable<number>
+    hasSome?: Enumerable<number>
+    isEmpty?: boolean
+  }
+
+  export type UserTagOrderByRelevanceInput = {
+    fields: Enumerable<UserTagOrderByRelevanceFieldEnum>
+    sort: SortOrder
+    search: string
+  }
+
   export type UserTagCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    tagId?: SortOrder
+    tagIds?: SortOrder
   }
 
   export type UserTagAvgOrderByAggregateInput = {
     id?: SortOrder
-    tagId?: SortOrder
+    tagIds?: SortOrder
   }
 
   export type UserTagMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    tagId?: SortOrder
   }
 
   export type UserTagMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    tagId?: SortOrder
   }
 
   export type UserTagSumOrderByAggregateInput = {
     id?: SortOrder
-    tagId?: SortOrder
+    tagIds?: SortOrder
+  }
+
+  export type TagCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<TagCreateWithoutUserInput>, Enumerable<TagUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TagCreateOrConnectWithoutUserInput>
+    createMany?: TagCreateManyUserInputEnvelope
+    connect?: Enumerable<TagWhereUniqueInput>
+  }
+
+  export type TagUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<TagCreateWithoutUserInput>, Enumerable<TagUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TagCreateOrConnectWithoutUserInput>
+    createMany?: TagCreateManyUserInputEnvelope
+    connect?: Enumerable<TagWhereUniqueInput>
   }
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type TagUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<TagCreateWithoutUserInput>, Enumerable<TagUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TagCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<TagUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: TagCreateManyUserInputEnvelope
+    set?: Enumerable<TagWhereUniqueInput>
+    disconnect?: Enumerable<TagWhereUniqueInput>
+    delete?: Enumerable<TagWhereUniqueInput>
+    connect?: Enumerable<TagWhereUniqueInput>
+    update?: Enumerable<TagUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<TagUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<TagScalarWhereInput>
+  }
+
+  export type TagUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<TagCreateWithoutUserInput>, Enumerable<TagUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TagCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<TagUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: TagCreateManyUserInputEnvelope
+    set?: Enumerable<TagWhereUniqueInput>
+    disconnect?: Enumerable<TagWhereUniqueInput>
+    delete?: Enumerable<TagWhereUniqueInput>
+    connect?: Enumerable<TagWhereUniqueInput>
+    update?: Enumerable<TagUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<TagUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<TagScalarWhereInput>
+  }
+
+  export type UserCreateNestedOneWithoutTagsInput = {
+    create?: XOR<UserCreateWithoutTagsInput, UserUncheckedCreateWithoutTagsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTagsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -4002,6 +4273,23 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutTagsNestedInput = {
+    create?: XOR<UserCreateWithoutTagsInput, UserUncheckedCreateWithoutTagsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTagsInput
+    upsert?: UserUpsertWithoutTagsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutTagsInput, UserUncheckedUpdateWithoutTagsInput>
+  }
+
+  export type UserTagCreatetagIdsInput = {
+    set: Enumerable<number>
+  }
+
+  export type UserTagUpdatetagIdsInput = {
+    set?: Enumerable<number>
+    push?: number | Enumerable<number>
   }
 
   export type NestedStringFilter = {
@@ -4015,6 +4303,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    search?: string
     not?: NestedStringFilter | string
   }
 
@@ -4029,6 +4318,7 @@ export namespace Prisma {
     contains?: string
     startsWith?: string
     endsWith?: string
+    search?: string
     not?: NestedStringWithAggregatesFilter | string
     _count?: NestedIntFilter
     _min?: NestedStringFilter
@@ -4071,6 +4361,114 @@ export namespace Prisma {
     gt?: number
     gte?: number
     not?: NestedFloatFilter | number
+  }
+
+  export type TagCreateWithoutUserInput = {
+    name: string
+    sortOrder?: number
+  }
+
+  export type TagUncheckedCreateWithoutUserInput = {
+    id?: number
+    name: string
+    sortOrder?: number
+  }
+
+  export type TagCreateOrConnectWithoutUserInput = {
+    where: TagWhereUniqueInput
+    create: XOR<TagCreateWithoutUserInput, TagUncheckedCreateWithoutUserInput>
+  }
+
+  export type TagCreateManyUserInputEnvelope = {
+    data: Enumerable<TagCreateManyUserInput>
+    skipDuplicates?: boolean
+  }
+
+  export type TagUpsertWithWhereUniqueWithoutUserInput = {
+    where: TagWhereUniqueInput
+    update: XOR<TagUpdateWithoutUserInput, TagUncheckedUpdateWithoutUserInput>
+    create: XOR<TagCreateWithoutUserInput, TagUncheckedCreateWithoutUserInput>
+  }
+
+  export type TagUpdateWithWhereUniqueWithoutUserInput = {
+    where: TagWhereUniqueInput
+    data: XOR<TagUpdateWithoutUserInput, TagUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TagUpdateManyWithWhereWithoutUserInput = {
+    where: TagScalarWhereInput
+    data: XOR<TagUpdateManyMutationInput, TagUncheckedUpdateManyWithoutTagsInput>
+  }
+
+  export type TagScalarWhereInput = {
+    AND?: Enumerable<TagScalarWhereInput>
+    OR?: Enumerable<TagScalarWhereInput>
+    NOT?: Enumerable<TagScalarWhereInput>
+    id?: IntFilter | number
+    name?: StringFilter | string
+    sortOrder?: IntFilter | number
+    userId?: StringFilter | string
+  }
+
+  export type UserCreateWithoutTagsInput = {
+    uid?: string
+    email: string
+    password: string
+    nickname: string
+  }
+
+  export type UserUncheckedCreateWithoutTagsInput = {
+    uid?: string
+    email: string
+    password: string
+    nickname: string
+  }
+
+  export type UserCreateOrConnectWithoutTagsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTagsInput, UserUncheckedCreateWithoutTagsInput>
+  }
+
+  export type UserUpsertWithoutTagsInput = {
+    update: XOR<UserUpdateWithoutTagsInput, UserUncheckedUpdateWithoutTagsInput>
+    create: XOR<UserCreateWithoutTagsInput, UserUncheckedCreateWithoutTagsInput>
+  }
+
+  export type UserUpdateWithoutTagsInput = {
+    uid?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UserUncheckedUpdateWithoutTagsInput = {
+    uid?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TagCreateManyUserInput = {
+    id?: number
+    name: string
+    sortOrder?: number
+  }
+
+  export type TagUpdateWithoutUserInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    sortOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TagUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    sortOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type TagUncheckedUpdateManyWithoutTagsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    sortOrder?: IntFieldUpdateOperationsInput | number
   }
 
 

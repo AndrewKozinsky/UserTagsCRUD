@@ -5,7 +5,8 @@ import { TagModule } from '../tag/tag.module'
 
 
 @Module({
-	imports: [UserModule, TagModule]
+	imports: [UserModule, TagModule],
+	controllers: []
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {

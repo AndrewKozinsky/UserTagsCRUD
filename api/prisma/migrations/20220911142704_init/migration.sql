@@ -11,20 +11,11 @@ CREATE TABLE "user" (
 -- CreateTable
 CREATE TABLE "tag" (
     "id" SMALLSERIAL NOT NULL,
-    "userId" UUID NOT NULL,
     "name" VARCHAR(40) NOT NULL,
     "sortOrder" SMALLINT NOT NULL DEFAULT 0,
+    "userId" UUID NOT NULL,
 
     CONSTRAINT "tag_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user_tag" (
-    "id" SMALLSERIAL NOT NULL,
-    "userId" UUID NOT NULL,
-    "tagId" SMALLINT NOT NULL,
-
-    CONSTRAINT "user_tag_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -39,5 +30,5 @@ CREATE UNIQUE INDEX "user_nickname_key" ON "user"("nickname");
 -- CreateIndex
 CREATE UNIQUE INDEX "tag_name_key" ON "tag"("name");
 
--- CreateIndex
-CREATE UNIQUE INDEX "user_tag_id_key" ON "user_tag"("id");
+-- AddForeignKey
+ALTER TABLE "tag" ADD CONSTRAINT "tag_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;

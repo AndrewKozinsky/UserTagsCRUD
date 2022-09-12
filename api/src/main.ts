@@ -4,6 +4,7 @@ import { AppModule } from './modules/app/app.module'
 import { ReqBodyPipe } from './common/req-body.pipe'
 import { HttpExceptionFilter } from './common/http-exeption.filter'
 import { ValidationPipe } from '@nestjs/common'
+import { CorsInterceptor } from './common/cors.interceptor'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
@@ -18,6 +19,9 @@ async function bootstrap() {
 
 	// Обработчик всех исключений
 	app.useGlobalFilters(new HttpExceptionFilter())
+
+	// Перехватчик разрешающий запросы с любых хостов
+	app.useGlobalInterceptors(new CorsInterceptor())
 
 	await app.listen(process.env.PORT)
 }

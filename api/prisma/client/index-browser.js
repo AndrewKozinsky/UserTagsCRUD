@@ -98,11 +98,16 @@ exports.Prisma.SortOrder = makeEnum({
   desc: 'desc'
 });
 
+exports.Prisma.TagOrderByRelevanceFieldEnum = makeEnum({
+  name: 'name',
+  userId: 'userId'
+});
+
 exports.Prisma.TagScalarFieldEnum = makeEnum({
   id: 'id',
-  userId: 'userId',
   name: 'name',
-  sortOrder: 'sortOrder'
+  sortOrder: 'sortOrder',
+  userId: 'userId'
 });
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
@@ -112,6 +117,13 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserOrderByRelevanceFieldEnum = makeEnum({
+  uid: 'uid',
+  email: 'email',
+  password: 'password',
+  nickname: 'nickname'
+});
+
 exports.Prisma.UserScalarFieldEnum = makeEnum({
   uid: 'uid',
   email: 'email',
@@ -119,10 +131,14 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   nickname: 'nickname'
 });
 
+exports.Prisma.UserTagOrderByRelevanceFieldEnum = makeEnum({
+  userId: 'userId'
+});
+
 exports.Prisma.UserTagScalarFieldEnum = makeEnum({
   id: 'id',
   userId: 'userId',
-  tagId: 'tagId'
+  tagIds: 'tagIds'
 });
 
 

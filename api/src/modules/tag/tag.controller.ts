@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Get, Put, UseGuards, Req } from '@nestjs/common'
+import { Body, Controller, Post, Get, Put, UseGuards, Req, Param, HttpCode, HttpStatus, Query } from '@nestjs/common'
 import { TagService } from './tag.service'
 import CreateTagDto from './dto/createTag.dto'
 import { AuthGuard } from '../../common/auth.guard'
 import { AppRequest } from '../../types/miscTypes'
+import UpdateTagDto from './dto/updateTag.dto'
 
 @Controller('tag')
 export class TagController {
@@ -10,69 +11,35 @@ export class TagController {
 
 	@UseGuards(AuthGuard)
 	@Post('')
+	@HttpCode(HttpStatus.CREATED)
 	createTag(@Req() request: AppRequest, @Body() body: CreateTagDto) {
 		return this.tagService.createTag(request, body)
 	}
 
-	/*@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Get(':id')
-	getTag() {
-		return {
-			'creator': {
-				'nickname': 'example',
-				'uid': 'exam-pl-eUID'
-			},
-			'name': 'example',
-			'sortOrder': '0'
-		}
-	}*/
+	@HttpCode(HttpStatus.OK)
+	getTagById(@Param('id') id: number) {
+		return this.tagService.getTagById(id)
+	}
 
-	/*@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Get('')
-	getTags() {
-		return {
-			'data': [
-				{
-					'creator': {
-						'nickname': 'example',
-						'uid': 'exam-pl-eUID'
-					},
-					'name': 'example',
-					'sortOrder': '0'
-				},
-				{
-					'creator': {
-						'nickname': 'example',
-						'uid': 'exam-pl-eUID'
-					},
-					'name': 'example',
-					'sortOrder': '0'
-				}
-			],
-			'meta': {
-				'offset': 10,
-				'length': 10,
-				'quantity': 100
-			}
-		}
-	}*/
+	@HttpCode(HttpStatus.OK)
+	getTags(@Query() query: {sortByOrder?: boolean, sortByName?: boolean, offset?: number, length?: number}) {
+		return this.tagService.getTags(query)
+	}
 
-	/*@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Put(':id')
-	updateTag() {
-		return {
-			'creator': {
-				'nickname': 'example',
-				'uid': 'exam-pl-eUID'
-			},
-			'name': 'example',
-			'sortOrder': '0'
-		}
-	}*/
+	updateTag(request: AppRequest, @Param('id') id: number, updateTagDto: UpdateTagDto) {
+		return this.tagService.updateTag(request, id, updateTagDto)
+	}
 
-	/*@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Put(':id')
-	deleteTag() {
-
-	}*/
+	@HttpCode(HttpStatus.NO_CONTENT)
+	deleteTag(request: AppRequest, @Param('id') id: number) {
+		this.tagService.deleteTag(request, id)
+	}
 }

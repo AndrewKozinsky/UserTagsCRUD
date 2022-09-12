@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Put, Req, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { UserService } from './user.service'
 import SignInDto from './dto/signIn.dto'
@@ -6,6 +6,7 @@ import LogInDto from './dto/logIn.dto'
 import { AuthGuard } from 'src/common/auth.guard'
 import UpdateUserDto from './dto/updateUser.dto'
 import { AppRequest } from '../../types/miscTypes'
+import AddTagIdsToUserDto from './dto/addTagIdsToUser.dto'
 
 @Controller('')
 export class UserController {
@@ -50,72 +51,24 @@ export class UserController {
 		this.userService.deleteUser(request, response)
 	}
 
+	@UseGuards(AuthGuard)
 	@Post('user/tag')
-	createUserTag() {
-		return {
-			'tags': [
-				{
-					id: 1,
-					name: 'example',
-					sortOrder: '0'
-				},
-				{
-					id: 2,
-					name: 'example',
-					sortOrder: '0'
-				},
-				{
-					id: 3,
-					name: 'example',
-					sortOrder: '0'
-				}
-			]
-		}
+	@HttpCode(HttpStatus.OK)
+	addTagIdsToUser(@Req() request: AppRequest, updateUserDto: AddTagIdsToUserDto) {
+		return this.userService.addTagIdsToUser(request, updateUserDto)
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete('user/tag/:id')
-	deleteUserTag() {
-		return {
-			'tags': [
-				{
-					id: 1,
-					name: 'example',
-					sortOrder: '0'
-				},
-				{
-					id: 2,
-					name: 'example',
-					sortOrder: '0'
-				},
-				{
-					id: 3,
-					name: 'example',
-					sortOrder: '0'
-				}
-			]
-		}
+	@HttpCode(HttpStatus.OK)
+	deleteUserTag(@Req() request: AppRequest, @Param('id') id: number) {
+		return this.userService.deleteUserTag(request, id)
 	}
 
+	@UseGuards(AuthGuard)
 	@Get('user/tag/my')
-	getUserTags() {
-		return {
-			tags: [
-				{
-					id: 1,
-					name: 'example',
-					sortOrder: '0'
-				},
-				{
-					id: 2,
-					name: 'example',
-					sortOrder: '0'
-				},
-				{
-					id: 3,
-					name: 'example',
-					sortOrder: '0'
-				}
-			]
-		}
+	@HttpCode(HttpStatus.OK)
+	getMyTags(@Req() request: AppRequest) {
+		return this.userService.getMyTags(request)
 	}
 }
