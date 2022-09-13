@@ -1,11 +1,17 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common'
 
 /**
- * Стражник проверяет, что запрос сделал пользователь с правильным JWT.
+ * Стражник проверяет, что в запросе есть объект user.
+ * Это будет означать, что такой пользователь существует и он передал корректный JWT.
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
 
+	/**
+	 * Метод вызываемый перед тем как запрос дойдёт до обработчика.
+	 * Проверяет наличие свойства user в объекте запроса. В объекте должны быть данные об авторизованном пользователе.
+	 * @param {Object} context — контекст выполнения программы
+	 */
 	async canActivate(context: ExecutionContext): Promise<true> | never {
 		const ctx = context.switchToHttp()
 		const request = ctx.getRequest()
@@ -17,6 +23,10 @@ export class AuthGuard implements CanActivate {
 		this.throwDoNotAllowException()
 	}
 
+	/**
+	 * Метод выбрасывает ошибку если пользователь запрашивает маршрут доступный авторизованным пользователям,
+	 * но в запросе не передан правильный JWT
+	 */
 	throwDoNotAllowException(): never {
 		throw new HttpException({
 			message: 'У вас нет права доступа к этому маршруту',

@@ -1,4 +1,18 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	HttpException,
+	HttpStatus,
+	Param,
+	Post,
+	Put,
+	Req,
+	Res,
+	UseGuards
+} from '@nestjs/common'
 import { Response } from 'express'
 import { UserService } from './user.service'
 import SignInDto from './dto/signIn.dto'

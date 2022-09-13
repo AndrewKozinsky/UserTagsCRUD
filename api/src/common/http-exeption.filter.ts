@@ -3,40 +3,61 @@ import { Response } from 'express'
 import { ResponseObjType } from '../types/responseTypes'
 
 /**
- * Фильтр обрабатывает HTTP-исключения и стандартные (неожиданные) ошибки.
+ * Фильтр обрабатывает HTTP-исключения и стандартные (непойманные) ошибки.
  */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-	catch(exception: unknown, host: ArgumentsHost) {
-		const workMode = process.env.NODE_ENV
+	/**
+	 * Метод обрабатывающий ошибки возникающие при работе сервера
+	 * @param {Object} exception — объект ошибки
+	 * @param {Object} host — объект с методами взаимодействия с запросами и ответами
+	 */
+	catch(exception: HttpException | Error, host: ArgumentsHost) {
+		const context = host.switchToHttp()
+		const response = context.getResponse<Response>()
 
-		// Контекст запроса и объект ответа
-		const ctx = host.switchToHttp()
-		const response = ctx.getResponse<Response>()
+		let responseData: ResponseObjType.Fail | ResponseObjType.Error
 
 		// Если выброшено контролируемое исключение
 		if (exception instanceof HttpException) {
-			const statusCode = exception.getStatus()
-
-			const respObj: ResponseObjType.Fail = {
-				status: 'fail',
-				statusCode,
-				...exception.getResponse() as ResponseObjType.ErrorsGroup
-			}
-
-			response.json(respObj)
+			responseData = this.handleHttpException(exception)
 		}
-		// Если возникла неожиданная ошибка
-		else if (exception instanceof Error) {
-			response.json(
-				{
-					status: 'error',
-					statusCode: 500,
-					message: ['development', 'test'].includes(workMode)
-						? exception.message
-						: 'Ошибка сервера.'
-				} as ResponseObjType.Error
-			)
+		// Если возникла непойманная ошибка
+		else {
+			responseData = this.handleError(exception)
 		}
+
+		response.json(responseData)
+	}
+
+	/**
+	 * Формирование ответа сервера на контролируемое исключение
+	 * @param {Object} exception — объект ошибки
+	 */
+	handleHttpException(exception: HttpException) {
+		const statusCode = exception.getStatus()
+
+		return {
+			status: 'fail',
+			statusCode,
+			...exception.getResponse() as ResponseObjType.ErrorsGroup
+		} as ResponseObjType.Fail
+	}
+
+	/**
+	 * Формирование ответа сервера на непойманное исключение
+	 * @param {Object} exception — объект ошибки
+	 */
+	handleError(exception: Error) {
+		const workMode = process.env.NODE_ENV
+
+		const message = ['development', 'test'].includes(workMode)
+			? exception.message : 'Ошибка сервера.'
+
+		return {
+			status: 'error',
+			statusCode: 500,
+			message
+		} as ResponseObjType.Error
 	}
 }
