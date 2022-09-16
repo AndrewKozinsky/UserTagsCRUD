@@ -10,9 +10,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { ResponseObjType } from '../types/responseTypes'
 
-/**
- * Трубка проверяющая соответствие тела запроса данным описанным в DTO
- */
+/** Трубка проверяющая соответствие тела запроса данным описанным в DTO */
 @Injectable()
 export class ReqBodyPipe implements PipeTransform {
 	async transform(value: unknown, { metatype }: ArgumentMetadata) {
@@ -23,10 +21,10 @@ export class ReqBodyPipe implements PipeTransform {
 		const errors = await validate(object)
 
 		if (errors.length > 0) {
-			throw new HttpException({
-				message: 'Поля тела запроса содержат ошибки',
-				fieldsErrors: this.formatErrors(errors)
-			}, HttpStatus.BAD_REQUEST)
+			const fieldsErrors = this.formatErrors(errors)
+			const body = this.formatResponse(fieldsErrors)
+
+			throw new HttpException(body, HttpStatus.BAD_REQUEST)
 		}
 		return value
 	}
@@ -42,5 +40,12 @@ export class ReqBodyPipe implements PipeTransform {
 			acc[err.property] = Object.values(err.constraints)
 			return acc
 		}, {})
+	}
+
+	formatResponse(fieldsErrors: ResponseObjType.Errors): ResponseObjType.ErrorsGroup {
+		return {
+			message: 'Поля тела запроса содержат ошибки',
+			fieldsErrors
+		}
 	}
 }

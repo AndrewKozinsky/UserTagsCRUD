@@ -1,9 +1,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
 import { Observable } from 'rxjs'
 
-/**
- * Перехватчик отправляет заголовки позволяющие запросы с любого хоста
- */
+/** Перехватчик отправляет заголовки позволяющие запросы с любого хоста */
 @Injectable()
 export class CorsInterceptor implements NestInterceptor {
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

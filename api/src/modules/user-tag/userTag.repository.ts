@@ -1,0 +1,3 @@
+class UserTagRepository {
+
+}

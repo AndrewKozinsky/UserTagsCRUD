@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { ResponseObjType } from '../types/responseTypes'
 
 /**
  * Стражник проверяет, что в запросе есть объект user.
@@ -28,8 +29,12 @@ export class AuthGuard implements CanActivate {
 	 * но в запросе не передан правильный JWT
 	 */
 	throwDoNotAllowException(): never {
-		throw new HttpException({
+		const errorBody: ResponseObjType.ErrorsGroup = {
 			message: 'У вас нет права доступа к этому маршруту',
-		}, HttpStatus.BAD_REQUEST)
+		}
+		throw new HttpException(
+			errorBody,
+			HttpStatus.UNAUTHORIZED
+		)
 	}
 }

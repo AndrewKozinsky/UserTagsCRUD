@@ -1,18 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { HelperService } from '../helper/helper.service'
-import CreateTagDto from './dto/createTag.dto'
-import { AppRequest } from '../../types/miscTypes'
-import { PrismaClient, Tag, User } from 'prisma/client'
-import UpdateTagDto from './dto/updateTag.dto'
+// import CreateTagDto from './dto/createTag.dto'
+// import { AppRequest } from '../../types/miscTypes'
+import { Prisma, PrismaClient, Tag, User } from '../../../prisma/client'
+// import UpdateTagDto from './dto/updateTag.dto'
 
 @Injectable()
 export class TagService {
 	constructor(
-		private prismaClient: PrismaClient,
+		@Inject('prismaClient') private prismaClient: PrismaClient,
 		private readonly helperService: HelperService
 	) {}
 
-	async createTag(request: AppRequest, createTagDto: CreateTagDto) {
+	/*async createTag(request: AppRequest, createTagDto: CreateTagDto) {
 		const newTagData = await this.createTagDataFromCreateTagDto(request, createTagDto)
 
 		const createdTag = await this.helperService.runQuery<Tag>(() => {
@@ -26,13 +26,13 @@ export class TagService {
 			name: createdTag.name,
 			sortOrder: createdTag.sortOrder
 		}
-	}
+	}*/
 
-	async getTagById(tagId: number) {
+	/*async getTagById(tagId: number) {
 		const fullTag = await this.getFullTag(tagId)
 
 		if (!fullTag) {
-			throw new HttpException('Не найден тег с переданным id.', HttpStatus.BAD_REQUEST)
+			throw new HttpException({ message: 'Не найден тег с переданным id.' }, HttpStatus.BAD_REQUEST)
 		}
 
 		return {
@@ -43,9 +43,9 @@ export class TagService {
 			name: fullTag.name,
 			sortOrder: fullTag.sortOrder
 		}
-	}
+	}*/
 
-	async getTags(query: {sortByOrder?: boolean, sortByName?: boolean, offset?: number, length?: number}) {
+	/*async getTags(query: {sortByOrder?: boolean, sortByName?: boolean, offset?: number, length?: number}) {
 		const { sortByOrder = false, sortByName = false, offset = 10, length = 10 } = query
 
 		const orderByFields: {sortOrder?:'asc', name?:'asc'} = {}
@@ -70,17 +70,17 @@ export class TagService {
 		}
 
 		return this.formGetTagsReturnValue(tags, offset, length, allTagsCount)
-	}
+	}*/
 
-	async updateTag(request: AppRequest, tagId: number, updateTagDto: UpdateTagDto) {
+	/*async updateTag(request: AppRequest, tagId: number, updateTagDto: UpdateTagDto) {
 		const fullTag = await this.getFullTag(tagId)
 
 		if (!fullTag) {
-			throw new HttpException('Не найден тег с переданным id.', HttpStatus.BAD_REQUEST)
+			throw new HttpException({ message: 'Не найден тег с переданным id.' }, HttpStatus.BAD_REQUEST)
 		}
 
 		if (fullTag.User.uid !== request.user?.uid) {
-			throw new HttpException('Пользователь не создавал тег с переданным идентификатором"', HttpStatus.BAD_REQUEST)
+			throw new HttpException({ message: 'Пользователь не создавал тег с переданным идентификатором"' }, HttpStatus.BAD_REQUEST)
 		}
 
 		const updatedTag = await this.helperService.runQuery<Tag & { User: User}>(() => {
@@ -103,17 +103,17 @@ export class TagService {
 			name: updatedTag.name,
 			sortOrder: updatedTag.sortOrder
 		}
-	}
+	}*/
 
-	async deleteTag(request: AppRequest, tagId: number) {
+	/*async deleteTag(request: AppRequest, tagId: number) {
 		const fullTag = await this.getFullTag(tagId)
 
 		if (!fullTag) {
-			throw new HttpException('Не найден тег с переданным id.', HttpStatus.BAD_REQUEST)
+			throw new HttpException({ message: 'Не найден тег с переданным id.' }, HttpStatus.BAD_REQUEST)
 		}
 
 		if (fullTag.User.uid !== request.user?.uid) {
-			throw new HttpException('Пользователь не создавал тег с переданным идентификатором"', HttpStatus.BAD_REQUEST)
+			throw new HttpException({ message: 'Пользователь не создавал тег с переданным идентификатором' }, HttpStatus.BAD_REQUEST)
 		}
 
 		await this.helperService.runQuery<Tag>(() => {
@@ -123,17 +123,26 @@ export class TagService {
 				}
 			})
 		})
+	}*/
+
+	/**
+	 * Обработчик /tag DELETE (удаление всех тегов)
+	 */
+	async deleteTags() {
+		return await this.helperService.runQuery<Prisma.BatchPayload>(() => {
+			return this.prismaClient.tag.deleteMany()
+		})
 	}
 
 
 	// ======== Вспомогательные методы ========
 
-	createTagDataFromCreateTagDto(request: AppRequest, createTagDto: CreateTagDto) {
+	/*createTagDataFromCreateTagDto(request: AppRequest, createTagDto: CreateTagDto) {
 		const userId = request.user?.uid as string
 		return Object.assign(createTagDto, { userId } )
-	}
+	}*/
 
-	async getFullTag(tagId: number) {
+	/*async getFullTag(tagId: number) {
 		return await this.helperService.runQuery<Tag & { User: User} | null>(() => {
 			return this.prismaClient.tag.findFirst({
 				where: {
@@ -144,9 +153,9 @@ export class TagService {
 				}
 			})
 		})
-	}
+	}*/
 
-	async getTagsByIds(tagIds: number[]) {
+	/*async getTagsByIds(tagIds: number[]) {
 		return await this.helperService.runQuery<Tag[]>(() => {
 			return this.prismaClient.tag.findMany({
 				where: {
@@ -154,9 +163,9 @@ export class TagService {
 				}
 			})
 		})
-	}
+	}*/
 
-	private formGetTagsReturnValue(tags: (Tag & {User: User})[], offset: number, length: number, quantity: number) {
+	/*private formGetTagsReturnValue(tags: (Tag & {User: User})[], offset: number, length: number, quantity: number) {
 		const data = tags.map(tag => {
 			return {
 				creator: {
@@ -176,5 +185,5 @@ export class TagService {
 				quantity
 			}
 		}
-	}
+	}*/
 }

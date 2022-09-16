@@ -2,9 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/co
 import { Response } from 'express'
 import { ResponseObjType } from '../types/responseTypes'
 
-/**
- * Фильтр обрабатывает HTTP-исключения и стандартные (непойманные) ошибки.
- */
+/** Фильтр обрабатывает HTTP-исключения и стандартные (непойманные) ошибки. */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
 	/**
@@ -34,21 +32,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
 	 * Формирование ответа сервера на контролируемое исключение
 	 * @param {Object} exception — объект ошибки
 	 */
-	handleHttpException(exception: HttpException) {
+	handleHttpException(exception: HttpException): ResponseObjType.Fail {
 		const statusCode = exception.getStatus()
 
 		return {
 			status: 'fail',
 			statusCode,
 			...exception.getResponse() as ResponseObjType.ErrorsGroup
-		} as ResponseObjType.Fail
+		}
 	}
 
 	/**
 	 * Формирование ответа сервера на непойманное исключение
 	 * @param {Object} exception — объект ошибки
 	 */
-	handleError(exception: Error) {
+	handleError(exception: Error): ResponseObjType.Error {
 		const workMode = process.env.NODE_ENV
 
 		const message = ['development', 'test'].includes(workMode)
@@ -58,6 +56,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			status: 'error',
 			statusCode: 500,
 			message
-		} as ResponseObjType.Error
+		}
 	}
 }

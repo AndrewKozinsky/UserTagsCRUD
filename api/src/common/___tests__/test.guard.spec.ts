@@ -1,13 +1,13 @@
-import { AuthGuard } from '../auth.guard'
-import { AppRequest } from '../../types/miscTypes'
+// import { AuthGuard } from '../auth.guard'
+// import { AppRequest } from '../../types/miscTypes'
 
-let authGuard = new AuthGuard()
+// let authGuard = new AuthGuard()
 
-beforeAll(() => {
+/*beforeAll(() => {
 	authGuard = new AuthGuard()
-})
+})*/
 
-describe('AuthGuard()', () => {
+/*describe('AuthGuard()', () => {
 	describe('canActivate()', () => {
 		it('Возвращает правду если в объекте запроса есть объект user', async () => {
 			const request = { user: {} } as AppRequest
@@ -45,9 +45,9 @@ describe('AuthGuard()', () => {
 			expect(throwExceptionWrapper).toThrow(errorMessage)
 		})
 	})
-})
+})*/
 
-function getContext(requestObj: Object): any {
+/*function getContext(requestObj: Object): any {
 	return {
 		switchToHttp() {
 			return {
@@ -57,4 +57,4 @@ function getContext(requestObj: Object): any {
 			}
 		}
 	} as any
-}
+}*/

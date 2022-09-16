@@ -1,15 +1,15 @@
-import { HttpExceptionFilter } from '../http-exeption.filter'
-import { HttpException } from '@nestjs/common'
-import { ResponseObjType } from '../../types/responseTypes'
+// import { HttpExceptionFilter } from '../http-exeption.filter'
+// import { HttpException } from '@nestjs/common'
+// import { ResponseObjType } from '../../types/responseTypes'
 
-let httpExceptionFilter = new HttpExceptionFilter()
-const errorMessage = 'test error'
+// let httpExceptionFilter = new HttpExceptionFilter()
+// const errorMessage = 'test error'
 
-beforeAll(() => {
+/*beforeAll(() => {
 	httpExceptionFilter = new HttpExceptionFilter()
-})
+})*/
 
-describe('HttpExceptionFilter', () => {
+/*describe('HttpExceptionFilter', () => {
 	describe('catch()', () => {
 		it('Возвращает объект со статусом fail и переданным кодом если первый аргумент типа HttpException', () => {
 			const [host, jsonMock] = getHostAndJson()
@@ -44,8 +44,9 @@ describe('HttpExceptionFilter', () => {
 			expect(firstArg.statusCode).toBe(500)
 		})
 	})
-})
+})*/
 
+/*
 function getHostAndJson() {
 	const jsonMock = jest.fn((responseData: ResponseObjType.Fail | ResponseObjType.Error) => {
 
@@ -65,3 +66,4 @@ function getHostAndJson() {
 
 	return [host, jsonMock]
 }
+*/
