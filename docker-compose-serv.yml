@@ -25,7 +25,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       JWT_SECRET: bxspozdFS46
-      JWT_EXPIRES: 1800000
+      JWT_EXPIRE: 1800
     depends_on:
       - db
     command: npm run start:prod

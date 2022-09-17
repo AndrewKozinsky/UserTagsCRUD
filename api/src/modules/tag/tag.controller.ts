@@ -3,12 +3,12 @@ import { ApiCreatedResponse, ApiNoContentResponse, ApiOperation, ApiTags } from 
 import { TagService } from './tag.service'
 // import CreateTagDto from './dto/createTag.dto'
 import { AuthGuard } from '../../common/auth.guard'
-import { SignInCreatedResponse } from '../user/responses/signIn.response'
+// import { SignInCreatedResponse } from '../user/responses/signIn.response'
 // import { AppRequest } from '../../types/miscTypes'
 // import UpdateTagDto from './dto/updateTag.dto'
 
-// @ApiTags('Tag')
-// @Controller('tag')
+@ApiTags('Tag')
+@Controller('tag')
 export class TagController {
 	constructor(private readonly tagService: TagService) {}
 
@@ -69,13 +69,8 @@ export class TagController {
 	@UseGuards(AuthGuard)
 	@Delete()
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@ApiOperation({
-		summary: 'Удаление всех тегов',
-		description: 'id пользователя, кому принадлежит тег, определяется по токену'
-	})
-	@ApiNoContentResponse({
-		description: 'Все теги удалены'
-	})
+	@ApiOperation({	summary: 'Удаление всех тегов' })
+	@ApiNoContentResponse({	description: 'Все теги удалены' })
 	deleteTags() {
 		return this.tagService.deleteTags()
 	}

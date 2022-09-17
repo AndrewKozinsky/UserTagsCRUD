@@ -1,26 +1,25 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { Prisma, PrismaClient, Tag, User } from '../../../prisma/client'
 import { v4 as uuid } from 'uuid'
-// import { Response } from 'express'
-import { HelperService } from '../helper/helper.service'
+import { Response } from 'express'
 import SignInDto from './dto/signIn.dto'
-import { getHash } from '../../utils/miscUtils'
 import { JwtPayload, sign, verify } from 'jsonwebtoken'
-// import LogInDto from './dto/logIn.dto'
+import LogInDto from './dto/logIn.dto'
 // import UpdateUserDto from './dto/updateUser.dto'
 import { AppRequest, JwtTokenPayloadType } from '../../types/miscTypes'
 import { SignInCreatedResponse } from './responses/signIn.response'
 // import AddTagIdsToUserDto from './dto/addTagIdsToUser.dto'
-import { UserTagService } from '../user-tag/userTag.service'
+// import { UserTagService } from '../user-tag/userTag.service'
+// import TagRepository from '../tag/tag.repository'
+import UserRepository from './user.repository'
+import UserTagRepository from '../user-tag/userTag.repository'
 // import { TagService } from '../tag/tag.service'
 
 @Injectable()
-export class UserService {
+export default class UserService {
 	constructor(
-		@Inject('prismaClient') private prismaClient: PrismaClient,
-		private readonly helperService: HelperService,
-		private readonly userTagService: UserTagService,
-		// private readonly tagService: TagService
+		private userRepository: UserRepository,
+		private readonly userTagRepository: UserTagRepository,
 	) {}
 
 	/**
@@ -28,11 +27,14 @@ export class UserService {
 	 * @param {Object} signInDto — тело запроса
 	 */
 	async signIn(signInDto: SignInDto): Promise<SignInCreatedResponse> {
-		const newUserData = await this.createUserDataFromSignInDto(signInDto)
+		const newUserData = await Object.assign(
+			signInDto,
+			{ uid: uuid() }
+		)
 
-		const createdUser = await this.createUser(newUserData)
+		const createdUser = await this.userRepository.create(newUserData)
 
-		await this.userTagService.createUserTags(createdUser.uid, [])
+		await this.userTagRepository.create(createdUser.uid, [])
 
 		return {
 			token: this.generateToken(createdUser),
@@ -40,13 +42,13 @@ export class UserService {
 		}
 	}
 
-	/*async logIn(request: AppRequest, logInDto: LogInDto) {
+	async logIn(request: AppRequest, logInDto: LogInDto) {
 		const credentials = {
 			email: logInDto.email,
 			password: logInDto.password
 		}
 
-		const user = request.user || await this.getUserByCredentials(credentials)
+		const user = request.user || await this.userRepository.get(credentials)
 
 		if (!user) {
 			this.throwErrorUserIsNotFound('Пользователь не найден. Неправильная почта или пароль.')
@@ -56,7 +58,7 @@ export class UserService {
 			token: this.generateToken(user),
 			expire: process.env.JWT_EXPIRE
 		}
-	}*/
+	}
 
 	/*async logout(response: Response) {
 		const cookieOptions = {
@@ -140,9 +142,7 @@ export class UserService {
 	 * Обработчик /users DELETE (удаление всех пользователей)
 	 */
 	async deleteUsers() {
-		return await this.helperService.runQuery<Prisma.BatchPayload>(() => {
-			return this.prismaClient.user.deleteMany()
-		})
+		return await this.userRepository.deleteAll()
 	}
 
 	/*async addTagIdsToUser(request: AppRequest, updateUserDto: AddTagIdsToUserDto) {
@@ -199,31 +199,6 @@ export class UserService {
 	// ======== Вспомогательные методы ========
 
 	/**
-	 * Создаёт объект с данными пользователя для сохранения в БД
-	 * @param {Object} signInDto — тело запроса
-	 */
-	private createUserDataFromSignInDto(signInDto: SignInDto): User {
-		const hashedPassword = getHash(signInDto.password)
-
-		return Object.assign(
-			signInDto,
-			{ uid: uuid(), password: hashedPassword }
-		)
-	}
-
-	/**
-	 * Создаёт пользователя в БД
-	 * @param {Object} userData — данные для создания пользователя
-	 */
-	private async createUser(userData: User): Promise<User> {
-		return await this.helperService.runQuery<User>(() => {
-			return this.prismaClient.user.create({
-				data: userData
-			})
-		})
-	}
-
-	/**
 	 * Генерирует токен авторизации
 	 * @param {Object} user — данные пользователя
 	 */
@@ -261,30 +236,12 @@ export class UserService {
 		}
 	}
 
-	/**
-	 * Получение пользователя из БД по переданным параметрам
-	 * @param {Object} credentials — объект с параметрами пользователя которого нужно найти
-	 */
-	async getUserByCredentials(credentials: Partial<User>) {
-		const whereObj = { ...credentials }
-
-		if (whereObj.password) {
-			whereObj.password = getHash(whereObj.password)
-		}
-
-		return await this.helperService.runQuery<null | User>(() => {
-			return this.prismaClient.user.findFirst({
-				where: whereObj
-			})
-		})
-	}
-
-	/*throwErrorUserIsNotFound(message = 'Пользователь не найден.'): never {
+	throwErrorUserIsNotFound(message = 'Пользователь не найден.'): never {
 		throw new HttpException(
 			{ message },
 			HttpStatus.BAD_REQUEST
 		)
-	}*/
+	}
 
 	/*shapeUserTags(userTags: Tag[]) {
 		return {
@@ -292,7 +249,7 @@ export class UserService {
 		}
 	}*/
 
-	/*shapeUserTag(userTag: Tag) {
+/*shapeUserTag(userTag: Tag) {
 		return {
 			id: userTag.id,
 			name: userTag.name,

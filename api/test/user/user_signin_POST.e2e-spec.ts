@@ -1,43 +1,34 @@
-// import * as request from 'supertest'
-import axios, { AxiosRequestConfig } from 'axios'
-import { Test } from '@nestjs/testing'
+import * as request from 'supertest'
 import { HttpStatus, INestApplication } from '@nestjs/common'
-import { AppModule } from '../../src/modules/app/app.module'
 import SignInDto from '../../src/modules/user/dto/signIn.dto'
 import { SignInCreatedResponse } from '../../src/modules/user/responses/signIn.response'
+import { WrongBodyResponse } from '../../src/types/wrongBody.response'
+import { clearDatabase, initApp } from '../common'
 
 
 let app: INestApplication
 
 beforeAll(async () => {
-	const moduleRef = await Test.createTestingModule({
-		imports: [AppModule],
-	}).compile()
+	app = await initApp(app)
 
-	app = moduleRef.createNestApplication()
-	await app.init()
+	await clearDatabase()
 })
 
 afterEach(async () => {
 	await clearDatabase()
 })
 
-/*afterAll(async () => {
+afterAll(async () => {
 	await app.close()
-})*/
+})
 
-/*describe('User', () => {
+describe('User', () => {
 	describe('/signin (POST)', () => {
-		it('Создание пользователя', (done) => {
+		it('Создание пользователя с правильными данными', (done) => {
 			const signInDto: SignInDto = {
 				email: 'test11@test.ru',
 				password: 'passwordQ1',
 				nickname: 'nickname11'
-			}
-
-			type ResponseBodyType = {
-				token: string,
-				expire: 1800
 			}
 
 			request(app.getHttpServer())
@@ -45,44 +36,117 @@ afterEach(async () => {
 				.send(signInDto)
 				.expect(HttpStatus.CREATED)
 				.then((response) => {
-					const responseObj: ResponseBodyType = response.body
+					const responseObj: SignInCreatedResponse = response.body
 
 					expect(typeof responseObj.token).toBe('string')
-					expect(responseObj.expire).toBe('1800')
+					// expect(responseObj.expire).toBe('1800')
 
 					done()
 				})
 		})
 	})
-})*/
 
-/** Функция очищает базу данных */
-async function clearDatabase() {
-	// Получение токена пользователя от имени которого будут делаться все запросы
-	const response = await createUser()
-	const token = response.data.token
+	describe('/signin (POST)', () => {
+		it('Создание пользователя с неверной почтой', (done) => {
+			const signInDto: SignInDto = {
+				email: 'wrong-email',
+				password: 'passwordQ1',
+				nickname: 'nickname11'
+			}
 
-	const config: AxiosRequestConfig = {
-		headers: { authorization: 'Bearer ' + token }
-	}
+			request(app.getHttpServer())
+				.post('/signin')
+				.send(signInDto)
+				.expect(HttpStatus.BAD_REQUEST)
+				.then((response) => {
+					const responseObj: WrongBodyResponse = response.body
+					expect(responseObj.status).toBe('fail')
+					done()
+				})
+		})
+	})
 
-	// Удаление всех пользователей, тегов, и тегов пользователей
-	await axios.delete('http://api:3000/users', config)
-	await axios.delete('http://api:3000/tag', config)
-	await axios.delete('http://api:3000/userTag', config)
-}
+	describe('/signin (POST)', () => {
+		it('Создание пользователя с неподходящем паролем', (done) => {
+			const signInDto: SignInDto = {
+				email: 'test11@test.ru',
+				password: 'wrong-password',
+				nickname: 'nickname11'
+			}
 
-/** Функция создаёт пользователя от имени которого будут делаться все запросы */
-async function createUser(): Promise<{data: SignInCreatedResponse}> {
-	const body: SignInDto = {
-		email: 'admin@admin.ru',
-		password: 'passwordQ1_',
-		nickname: 'admin'
-	}
+			request(app.getHttpServer())
+				.post('/signin')
+				.send(signInDto)
+				.expect(HttpStatus.BAD_REQUEST)
+				.then((response) => {
+					const responseObj: WrongBodyResponse = response.body
+					expect(responseObj.status).toBe('fail')
+					done()
+				})
+		})
+	})
 
-	const config: AxiosRequestConfig = {
-		headers: { 'Content-Type': 'application/json' },
-	}
+	describe('/signin (POST)', () => {
+		it('Создание пользователей с одинаковой почтой', (done) => {
+			const firstUserDto: SignInDto = {
+				email: 'user1@test.ru',
+				password: 'passwordQ1',
+				nickname: 'user1'
+			}
 
-	return await axios.post('http://api:3000/signin', body, config)
-}
+			const secondUserDto: SignInDto = {
+				email: 'user1@test.ru',
+				password: 'passwordQ1',
+				nickname: 'user2'
+			}
+
+			request(app.getHttpServer())
+				.post('/signin')
+				.send(firstUserDto)
+				.then(() => {
+
+					request(app.getHttpServer())
+						.post('/signin')
+						.send(secondUserDto)
+						.expect(HttpStatus.BAD_REQUEST)
+						.then((response) => {
+							const responseObj: WrongBodyResponse = response.body
+							expect(responseObj.status).toBe('fail')
+							done()
+						})
+				})
+		})
+	})
+
+	describe('/signin (POST)', () => {
+		it('Создание пользователей с одинаковыми псевдонимами', (done) => {
+			const firstUserDto: SignInDto = {
+				email: 'user1@test.ru',
+				password: 'passwordQ1',
+				nickname: 'user'
+			}
+
+			const secondUserDto: SignInDto = {
+				email: 'user2@test.ru',
+				password: 'passwordQ1',
+				nickname: 'user'
+			}
+
+			request(app.getHttpServer())
+				.post('/signin')
+				.send(firstUserDto)
+				.then(() => {
+
+					request(app.getHttpServer())
+						.post('/signin')
+						.send(secondUserDto)
+						.expect(HttpStatus.BAD_REQUEST)
+						.then((response) => {
+							const responseObj: WrongBodyResponse = response.body
+							expect(responseObj.status).toBe('fail')
+							done()
+						})
+				})
+		})
+	})
+})

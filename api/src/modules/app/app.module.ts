@@ -1,17 +1,17 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { UserModule } from '../user/user.module'
 import { IncludeUserMiddleware } from '../../common/include-user.middleware'
-// import { TagModule } from '../tag/tag.module'
+import { TagModule } from '../tag/tag.module'
 import { PrismaModule } from '../prisma/prisma.module'
-// import { UserTagModule } from '../user-tag/userTag.module'
+import { UserTagModule } from '../user-tag/userTag.module'
 
 
 @Module({
 	imports: [
 		PrismaModule.forRoot(),
 		UserModule,
-		// TagModule,
-		// UserTagModule
+		TagModule,
+		UserTagModule
 	],
 	controllers: []
 })

@@ -1,15 +1,14 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
-import { HelperService } from '../helper/helper.service'
 // import CreateTagDto from './dto/createTag.dto'
 // import { AppRequest } from '../../types/miscTypes'
-import { Prisma, PrismaClient, Tag, User } from '../../../prisma/client'
+// import { Prisma, PrismaClient, Tag, User } from '../../../prisma/client'
+import TagRepository from './tag.repository'
 // import UpdateTagDto from './dto/updateTag.dto'
 
 @Injectable()
 export class TagService {
 	constructor(
-		@Inject('prismaClient') private prismaClient: PrismaClient,
-		private readonly helperService: HelperService
+		private tagRepository: TagRepository
 	) {}
 
 	/*async createTag(request: AppRequest, createTagDto: CreateTagDto) {
@@ -129,9 +128,7 @@ export class TagService {
 	 * Обработчик /tag DELETE (удаление всех тегов)
 	 */
 	async deleteTags() {
-		return await this.helperService.runQuery<Prisma.BatchPayload>(() => {
-			return this.prismaClient.tag.deleteMany()
-		})
+		return this.tagRepository.deleteAll()
 	}
 
 
@@ -165,7 +162,7 @@ export class TagService {
 		})
 	}*/
 
-	/*private formGetTagsReturnValue(tags: (Tag & {User: User})[], offset: number, length: number, quantity: number) {
+/*private formGetTagsReturnValue(tags: (Tag & {User: User})[], offset: number, length: number, quantity: number) {
 		const data = tags.map(tag => {
 			return {
 				creator: {

@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
-import { UserService } from '../modules/user/user.service'
+import UserRepository from '../modules/user/user.repository'
+import UserService from '../modules/user/user.service'
 
 /**
  * Middleware ищет в запросе токен авторизации, проверяет его на правильность,
@@ -7,7 +8,10 @@ import { UserService } from '../modules/user/user.service'
  * */
 @Injectable()
 export class IncludeUserMiddleware implements NestMiddleware {
-	constructor(private readonly userService: UserService) {}
+	constructor(
+		private readonly userService: UserService,
+		private readonly userRepository: UserRepository
+	) {}
 
 	/**
 	 * Промежуточная функция срабатываемая до попадания запроса к стражнику и обработчику запроса.
@@ -32,7 +36,7 @@ export class IncludeUserMiddleware implements NestMiddleware {
 			return
 		}
 
-		const user = await this.userService.getUserByCredentials({ uid: userId })
+		const user = await this.userRepository.get({ uid: userId })
 		if (user) req.user = user
 
 		next()

@@ -5,24 +5,24 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
-	// 	Param,
+	Param,
 	Post,
-// 	Put,
-// 	Req,
-// 	Res,
-// 	UseGuards
+	Put,
+	Req,
+	Res,
+	UseGuards
 } from '@nestjs/common'
-import { Response } from 'express'
-import { UserService } from './user.service'
+// import { Response } from 'express'
+import UserService from './user.service'
 import SignInDto from './dto/signIn.dto'
-// import LogInDto from './dto/logIn.dto'
+import LogInDto from './dto/logIn.dto'
 // import { AuthGuard } from '../../common/auth.guard'
 // import UpdateUserDto from './dto/updateUser.dto'
-// import { AppRequest } from '../../types/miscTypes'
+import { AppRequest } from '../../types/miscTypes'
 // import AddTagIdsToUserDto from './dto/addTagIdsToUser.dto'
 import {
 	ApiBadRequestResponse,
-	ApiCreatedResponse,
+	ApiCreatedResponse, ApiForbiddenResponse,
 	ApiHeader,
 	ApiNoContentResponse,
 	ApiOperation,
@@ -55,15 +55,15 @@ export class UserController {
 		return this.userService.signIn(body)
 	}
 
-	// @Post('login')
-	// @HttpCode(HttpStatus.OK)
-	/*@ApiOperation({
+	@Post('login')
+	@HttpCode(HttpStatus.OK)
+	@ApiOperation({
 		summary: 'Вход пользователя',
 		description: 'id пользователя определяется по токену'
-	})*/
-	/*logIn(@Req() request: AppRequest, @Body() body: LogInDto) {
+	})
+	logIn(@Req() request: AppRequest, @Body() body: LogInDto) {
 		return this.userService.logIn(request, body)
-	}*/
+	}
 
 	// @Post('logout')
 	// @HttpCode(HttpStatus.NO_CONTENT)
@@ -114,8 +114,8 @@ export class UserController {
 	@ApiNoContentResponse({
 		description: 'Все пользователи удалены',
 	})
-	@ApiBadRequestResponse({
-		description: 'Предоставлены неправильные данные для удаления пользователя',
+	@ApiForbiddenResponse({
+		description: 'Нет прав на этот маршрут',
 		type: ForbiddenResponse
 	})
 	deleteUsers() {
@@ -151,7 +151,7 @@ export class UserController {
 		summary: 'Получение массива идентификаторов тегов пользователя',
 		description: 'id пользователя определяется по токену'
 	})*/
-	/*getMyTags(@Req() request: AppRequest) {
+/*getMyTags(@Req() request: AppRequest) {
 		return this.userService.getMyTags(request)
 	}*/
 }

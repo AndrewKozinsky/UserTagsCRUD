@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common'
 import { UserController } from './user.controller'
-import { UserService } from './user.service'
-import { HelperService } from '../helper/helper.service'
-import { UserTagService } from '../user-tag/userTag.service'
-// import { TagService } from '../tag/tag.service'
+import UserService from './user.service'
+// import { TagModule } from '../tag/tag.module'
+import UserRepository from './user.repository'
+import { UserTagModule } from '../user-tag/userTag.module'
 
 @Module({
-	imports: [],
+	imports: [/*TagModule,*/ UserTagModule],
 	controllers: [UserController],
-	providers: [UserService, HelperService, UserTagService/*, TagService*/],
-	exports: [UserService]
+	providers: [UserService, UserRepository],
+	exports: [UserService, UserRepository]
 })
 export class UserModule {}

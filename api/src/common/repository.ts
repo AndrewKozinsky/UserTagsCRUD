@@ -1,18 +1,17 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { PrismaClientKnownRequestError } from '../../../prisma/client/runtime'
-import { PrismaClientKnownRequestError as PrismaClientKnownRequestErrorTest } from '../../../prisma_test/client/runtime'
-import { ResponseObjType } from '../../types/responseTypes'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import { PrismaClientKnownRequestError } from '../../prisma/client/runtime'
+import { PrismaClientKnownRequestError as PrismaClientKnownRequestErrorTest } from '../../prisma_test/client/runtime'
+import { ResponseObjType } from '../types/responseTypes'
 
-/** Класс с различными методами используемые на всём приложении */
-@Injectable()
-export class HelperService {
+/** Родительский класс всех классов конкретных репозиториев */
+export class Repository {
 
 	/**
 	 * Метод запускает функцию с методом Призмы. Например, для записи сущности в таблицу БД.
 	 * При появлении ошибки будет выброшено исключение, которое будет обработано в фильтре.
 	 * @param {Function} queryFn — запускаемый метод Призмы
 	 */
-	async runQuery<T>(queryFn: () => Promise<T>): Promise<T | never> {
+	async run<T>(queryFn: () => Promise<T>): Promise<T | never> {
 		try {
 			return await queryFn()
 		}

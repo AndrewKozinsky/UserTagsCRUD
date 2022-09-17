@@ -10,6 +10,19 @@ import { CorsInterceptor } from './common/cors.interceptor'
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 
+	setupApp(app)
+	setupSwagger(app)
+
+	await app.listen(process.env.PORT)
+}
+
+bootstrap()
+
+/**
+ * Функция настраивает middleware, трубки, фильтры и перехватчики приложения
+ * @param {Object} app — объект приложения
+ */
+function setupApp(app: INestApplication) {
 	app.use(cookieParser())
 
 	// Проверка соответствие тела запроса DTO
@@ -23,12 +36,7 @@ async function bootstrap() {
 
 	// Перехватчик разрешающий запросы с любых хостов
 	app.useGlobalInterceptors(new CorsInterceptor())
-
-	setupSwagger(app)
-
-	await app.listen(process.env.PORT)
 }
-bootstrap()
 
 /**
  * Функция настраивает Swagger для приложения

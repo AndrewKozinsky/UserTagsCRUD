@@ -22,12 +22,14 @@ services:
       NODE_ENV: development
       PORT: 3000
       JWT_SECRET: bxspozdFS46
-      JWT_EXPIRES: 1800000
+      JWT_EXPIRE: 1800000
     depends_on:
       - db
     volumes:
       - ./api/src:/app/src
+      - ./api/test:/app/test
       - ./api/prisma:/app/prisma
+      - ./api/prisma_test:/app/prisma_test
     command: npm run start:dev
 
   db:

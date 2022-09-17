@@ -1,38 +1,19 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
-import { Prisma, PrismaClient, UserTag } from '../../../prisma/client'
-import { HelperService } from '../helper/helper.service'
+// import { UserTag } from '../../../prisma/client'
+import UserTagRepository from './userTag.repository'
 
-// @Injectable()
+@Injectable()
 export class UserTagService {
 	constructor(
-		@Inject('prismaClient') private prismaClient: PrismaClient,
-		private readonly helperService: HelperService
+		private userTagRepository: UserTagRepository,
 	) {}
 
-	/*async deleteUserTags() {
-		return await this.helperService.runQuery<Prisma.BatchPayload>(() => {
-			return this.prismaClient.userTag.deleteMany()
-		})
-	}*/
+	async deleteUserTags() {
+		return this.userTagRepository.deleteAll()
+	}
 
 
 	// ======== Вспомогательные методы ========
-
-	/**
-	 * Создаёт в БД ряд таблицы с идентификатором пользователя и массивом идентификаторов тегов выбранные пользователем
-	 * @param {String} userId — id пользователя
-	 * @param {Array} userTagIds — массив идентификаторов тегов
-	 */
-	async createUserTags(userId: string, userTagIds: number[]) {
-		await this.helperService.runQuery<UserTag>(() => {
-			return this.prismaClient.userTag.create({
-				data: {
-					userId,
-					tagIds: userTagIds
-				}
-			})
-		})
-	}
 
 	/*async replaceUserTagsArr(userId: string, userTagIds: number[]) {
 		return await this.helperService.runQuery<UserTag | null>(() => {
@@ -57,7 +38,7 @@ export class UserTagService {
 		})
 	}*/
 
-	/*async deleteUserTag(userId: string, tagIdForDeletion: number) {
+/*async deleteUserTag(userId: string, tagIdForDeletion: number) {
 		const userTags = await this.getUserTags(userId)
 
 		if (!userTags) {
