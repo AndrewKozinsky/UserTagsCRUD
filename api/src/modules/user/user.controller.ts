@@ -25,14 +25,18 @@ import {
 	ApiCreatedResponse, ApiForbiddenResponse,
 	ApiHeader,
 	ApiNoContentResponse,
+	ApiOkResponse,
 	ApiOperation,
 	ApiResponse,
-	ApiTags
+	ApiTags,
+	getSchemaPath,
+	refs
 } from '@nestjs/swagger'
 import { SignInCreatedResponse } from './responses/signIn.response'
-import { WrongBodyResponse } from '../../types/wrongBody.response'
+import { FailFullResponse, FailResponse } from '../../types/wrongBody.response'
 import { ForbiddenResponse } from '../../types/forbidden.response'
-
+import { LogInOkResponse } from './responses/logIn.response'
+import { Response } from 'express'
 
 
 @ApiTags('User')
@@ -49,31 +53,41 @@ export class UserController {
 	})
 	@ApiBadRequestResponse({
 		description: 'Предоставлены неправильные данные для создания пользователя',
-		type: WrongBodyResponse
+		type: FailResponse
 	})
-	signIn(@Body() body: SignInDto): Promise<SignInCreatedResponse> {
-		return this.userService.signIn(body)
+	signIn(@Res() response: Response, @Body() body: SignInDto) {
+		return this.userService.signIn(response, body)
 	}
 
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	@ApiOperation({
 		summary: 'Вход пользователя',
-		description: 'id пользователя определяется по токену'
+		description: 'id пользователя определяется по токену.'
 	})
-	logIn(@Req() request: AppRequest, @Body() body: LogInDto) {
-		return this.userService.logIn(request, body)
+	@ApiOkResponse({
+		description: 'Пользователь авторизовался и в ответе получил токен.',
+		type: LogInOkResponse
+	})
+	@ApiBadRequestResponse({
+		description: 'Предоставлены неправильные данные для входа пользователя.',
+		schema: {
+			anyOf: refs(FailResponse, FailFullResponse)
+		},
+	})
+	logIn(@Req() request: AppRequest, @Res() response: Response, @Body() body: LogInDto) {
+		return this.userService.logIn(request, response, body)
 	}
 
-	// @Post('logout')
-	// @HttpCode(HttpStatus.NO_CONTENT)
-	/*@ApiOperation({
+	@Post('logout')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@ApiOperation({
 		summary: 'Выход пользователя',
-		description: 'id пользователя определяется по токену'
-	})*/
-	/*logout(@Res() response: Response) {
+		description: 'В ответ отправляется кука token с пустым значением и истёкшем сроком действия.'
+	})
+	logout(@Res() response: Response) {
 		this.userService.logout(response)
-	}*/
+	}
 
 	// @UseGuards(AuthGuard)
 	// @Get('user')

@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '../src/modules/app/app.module'
 import * as cookieParser from 'cookie-parser'
@@ -69,3 +69,25 @@ async function createLegateUser(): Promise<{data: SignInCreatedResponse}> | neve
 		throw new Error('Fail do request to http://api:3000/signin')
 	}
 }
+
+export const testUserCredentials: SignInDto = {
+	email: 'test@email.com',
+	password: 'passwordQ1_',
+	nickname: 'testUser'
+}
+
+/** Создание тестового пользователя, который будет манипулировать остальными маршрутами */
+export async function createTestUser(): Promise<string> | never {
+	const config: AxiosRequestConfig = {
+		headers: { 'Content-Type': 'application/json' },
+	}
+
+	try {
+		const response = await axios.post('http://api:3000/signin', testUserCredentials, config)
+		return response.data.token
+	}
+	catch (error) {
+		throw new Error('Fail do request to http://api:3000/signin to create test user')
+	}
+}
+

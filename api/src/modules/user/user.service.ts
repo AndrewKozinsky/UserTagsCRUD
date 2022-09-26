@@ -13,6 +13,7 @@ import { SignInCreatedResponse } from './responses/signIn.response'
 // import TagRepository from '../tag/tag.repository'
 import UserRepository from './user.repository'
 import UserTagRepository from '../user-tag/userTag.repository'
+import { LogInOkResponse } from './responses/logIn.response'
 // import { TagService } from '../tag/tag.service'
 
 @Injectable()
@@ -24,9 +25,10 @@ export default class UserService {
 
 	/**
 	 * Обработчик /signin POST (регистрация пользователя)
+	 * @param {Object} response — объект ответа
 	 * @param {Object} signInDto — тело запроса
 	 */
-	async signIn(signInDto: SignInDto): Promise<SignInCreatedResponse> {
+	async signIn(response: Response, signInDto: SignInDto): Promise<void> {
 		const newUserData = await Object.assign(
 			signInDto,
 			{ uid: uuid() }
@@ -36,13 +38,25 @@ export default class UserService {
 
 		await this.userTagRepository.create(createdUser.uid, [])
 
-		return {
-			token: this.generateToken(createdUser),
+		const token = this.generateToken(createdUser)
+
+		const body: SignInCreatedResponse = {
+			token,
 			expire: process.env.JWT_EXPIRE
 		}
+
+		response = this.setTokenCookieToResponse(response, token)
+		response.status(HttpStatus.CREATED)
+		response.send(body)
 	}
 
-	async logIn(request: AppRequest, logInDto: LogInDto) {
+	/**
+	 * Обработчик /login POST (вход пользователя)
+	 * @param {Object} request — объект запроса
+	 * @param {Object} response — объект ответа
+	 * @param {Object} logInDto — тело запроса
+	 */
+	async logIn(request: AppRequest, response: Response, logInDto: LogInDto) {
 		const credentials = {
 			email: logInDto.email,
 			password: logInDto.password
@@ -54,20 +68,29 @@ export default class UserService {
 			this.throwErrorUserIsNotFound('Пользователь не найден. Неправильная почта или пароль.')
 		}
 
-		return {
-			token: this.generateToken(user),
+		const token = this.generateToken(user)
+
+		const body: LogInOkResponse = {
+			token,
 			expire: process.env.JWT_EXPIRE
 		}
+
+		response = this.setTokenCookieToResponse(
+			response, token, process.env.JWT_EXPIRE * 1000
+		)
+		response.status(HttpStatus.OK)
+		response.send(body)
 	}
 
-	/*async logout(response: Response) {
-		const cookieOptions = {
-			expires: new Date(Date.now())
-		}
-		response.cookie('token', '', cookieOptions)
+	/**
+	 * Выход пользователя
+	 * @param {Object} response — объект ответа
+	 */
+	async logout(response: Response) {
+		response = this.setTokenCookieToResponse(response, '', -1000)
 		response.status(HttpStatus.NO_CONTENT)
 		response.send()
-	}*/
+	}
 
 	/*async getUser(request: AppRequest) {
 		const { user } = request
@@ -236,11 +259,36 @@ export default class UserService {
 		}
 	}
 
+	/**
+	 * Функция выбрасывает ошибку
+	 * @param {String} message — сообщение об ошибке
+	 */
 	throwErrorUserIsNotFound(message = 'Пользователь не найден.'): never {
 		throw new HttpException(
 			{ message },
 			HttpStatus.BAD_REQUEST
 		)
+	}
+
+	/**
+	 * Ставит в объект ответа куку строки токена
+	 * @param {Object} response — объект ответа
+	 * @param {String} token — строка токена
+	 * @param {Number} expires — срок действия куки прибавляемый к текущей дате
+	 */
+	setTokenCookieToResponse(response: Response, token = '', expires = 0): Response {
+		const cookieOptions = {
+			expires: new Date(Date.now() + expires)
+		}
+		response.cookie('token', token, cookieOptions)
+
+
+		const cookieOptions2 = {
+			expires: new Date(Date.now() + expires)
+		}
+		response.cookie('test', token, cookieOptions2)
+
+		return response
 	}
 
 	/*shapeUserTags(userTags: Tag[]) {

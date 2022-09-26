@@ -1,5 +1,9 @@
 # Тестовое задание для разработчика NodeJS
 
+## Запущенное приложение
+API развёрнуто по адресу [crud.andrewkozinsky.ru](https://crud.andrewkozinsky.ru).
+Документация по API [crud.andrewkozinsky.ru/docs](https://crud.andrewkozinsky.ru/docs).
+
 ## Первоначальная настройка
 1. Перейдите в папку проекта.
 2. Запустить Докер в стандартном режиме: ```docker-compose -f docker-compose-dev.yml up --build```.
